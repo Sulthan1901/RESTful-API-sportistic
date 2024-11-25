@@ -1,0 +1,259 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Booking API",
+        "description": "API untuk sistem pemesanan lapangan olahraga",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/bookings/check-availability": {
+            "get": {
+                "description": "Cek ketersediaan lapangan pada waktu tertentu",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi"
+                    },
+                    {
+                        "name": "court_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID lapangan"
+                    },
+                    {
+                        "name": "start_time",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "description": "Waktu mulai (format ISO 8601)"
+                    },
+                    {
+                        "name": "duration",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        },
+                        "description": "Durasi dalam jam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ketersediaan berhasil dicek",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "available": { "type": "boolean" },
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lapangan tidak ditemukan"
+                    }
+                }
+            }
+        },
+        "/api/bookings": {
+            "post": {
+                "description": "Pemesanan lapangan baru",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi pengguna"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Detail pemesanan",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "court_id",
+                                    "start_time",
+                                    "duration"
+                                ],
+                                "properties": {
+                                    "court_id": { "type": "integer" },
+                                    "start_time": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "duration": { "type": "integer" },
+                                    "notes": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pemesanan berhasil dilakukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "booking_id": {
+                                                    "type": "integer"
+                                                },
+                                                "court_id": {
+                                                    "type": "integer"
+                                                },
+                                                "start_time": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "duration": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Waktu tidak tersedia atau input tidak valid"
+                    }
+                }
+            },
+            "get": {
+                "description": "Melihat riwayat pemesanan",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi"
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID pengguna (hanya untuk admin)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat pemesanan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "booking_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "court_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "start_time": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "duration": {
+                                                        "type": "integer"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/{booking_id}": {
+            "delete": {
+                "description": "Pembatalan pemesanan",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi pengguna"
+                    },
+                    {
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID pemesanan"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pemesanan berhasil dibatalkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": { "type": "string" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Tidak dapat membatalkan karena melewati batas waktu"
+                    }
+                }
+            }
+        }
+    }
+}

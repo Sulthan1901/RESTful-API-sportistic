@@ -1,0 +1,289 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Court API",
+        "description": "API untuk manajemen lapangan olahraga",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/courts": {
+            "get": {
+                "description": "Melihat daftar lapangan yang tersedia",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "futsal"
+                        },
+                        "description": "Jenis lapangan (opsional)"
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Filter berdasarkan lokasi"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar lapangan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": { "type": "integer" },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "location": {
+                                                        "type": "string"
+                                                    },
+                                                    "price_per_hour": {
+                                                        "type": "number"
+                                                    },
+                                                    "available": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "errors": { "type": "object" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "post": {
+                "description": "Menambahkan lapangan baru (admin only)",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi admin"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data lapangan baru",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "type",
+                                    "location",
+                                    "price_per_hour",
+                                    "available"
+                                ],
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "type": { "type": "string" },
+                                    "location": { "type": "string" },
+                                    "facilities": {
+                                        "type": "array",
+                                        "items": { "type": "string" }
+                                    },
+                                    "price_per_hour": { "type": "number" },
+                                    "available": { "type": "boolean" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lapangan berhasil ditambahkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": { "type": "object" },
+                                        "errors": { "type": "object" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - hanya admin yang diperbolehkan"
+                    }
+                }
+            }
+        },
+        "/api/courts/{id}": {
+            "get": {
+                "description": "Melihat detail lapangan berdasarkan ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" },
+                        "description": "ID lapangan"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail lapangan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": { "type": "integer" },
+                                                "name": { "type": "string" },
+                                                "type": { "type": "string" },
+                                                "location": {
+                                                    "type": "string"
+                                                },
+                                                "facilities": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "price_per_hour": {
+                                                    "type": "number"
+                                                },
+                                                "available": {
+                                                    "type": "boolean"
+                                                }
+                                            }
+                                        },
+                                        "errors": { "type": "object" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lapangan tidak ditemukan"
+                    }
+                }
+            },
+            "put": {
+                "description": "Mengubah data lapangan (admin only)",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi admin"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" },
+                        "description": "ID lapangan"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data lapangan yang diperbarui",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "type": { "type": "string" },
+                                    "location": { "type": "string" },
+                                    "facilities": {
+                                        "type": "array",
+                                        "items": { "type": "string" }
+                                    },
+                                    "price_per_hour": { "type": "number" },
+                                    "available": { "type": "boolean" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lapangan berhasil diperbarui"
+                    },
+                    "403": {
+                        "description": "Forbidden - hanya admin yang diperbolehkan"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Menghapus lapangan (admin only)",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk autentikasi admin"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" },
+                        "description": "ID lapangan"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lapangan berhasil dihapus"
+                    },
+                    "403": {
+                        "description": "Forbidden - hanya admin yang diperbolehkan"
+                    }
+                }
+            }
+        }
+    }
+}
