@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Komunitas extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'nama_komunitas',
         'deskripsi_komunitas',
         'jumlah_anggota',
+        'batas_anggota',
         'creator_id'
     ];
 

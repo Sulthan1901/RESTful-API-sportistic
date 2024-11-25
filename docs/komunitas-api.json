@@ -491,6 +491,79 @@
                     }
                 }
             }
+        },
+        "/api/komunitas/{id}/join": {
+            "post": {
+                "description": "Bergabung ke komunitas",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Bearer token untuk otentikasi"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID komunitas yang ingin diikuti"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mengirim permintaan bergabung",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "Permintaan bergabung telah dikirim",
+                                    "status": "pending"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal mengirim permintaan",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errors": {
+                                        "message": "Anda sudah mengirim permintaan sebelumnya"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errors": {
+                                        "message": "Unauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

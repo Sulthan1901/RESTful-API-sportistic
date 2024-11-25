@@ -2,16 +2,15 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Court;
 use Illuminate\Database\Seeder;
 
 class CourtSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        //
+        Court::factory()->count(10)->create([
+            'available' => true,
+        ]);
     }
 }

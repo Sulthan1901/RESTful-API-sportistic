@@ -44,4 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Komunitas member routes
     Route::get('/komunitas/{id}/members/requests', [KomunitasController::class, 'showRequests'])->middleware('komunitas.creator');
     Route::post('/komunitas/{id}/members/requests', [KomunitasController::class, 'handleRequest'])->middleware('komunitas.creator');
+    Route::post('/komunitas/{id}/join', [KomunitasController::class, 'joinKomunitas']);
+    Route::post('/komunitas/{id}/leave', [KomunitasController::class, 'leaveKomunitas']);
 });
